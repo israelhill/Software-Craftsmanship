@@ -127,13 +127,14 @@ public class ProductsTest {
 
     @Test
     public void testMake() {
-        SerialNumber opadNum = new SerialNumber(BigInteger.valueOf(1000));
+        SerialNumber opadNum = new SerialNumber(BigInteger.valueOf(1001));
         Set<String> set = new HashSet<>();
         set.add("z");
         set.add("a");
         set.add("abc");
         set.add("abcd");
         Optional<Set<String>> description = Optional.of(set);
+
         try {
             Opad o = (Opad) AbstractProduct.make(ProductType.OPAD, opadNum, description);
             System.out.println(o.toString());

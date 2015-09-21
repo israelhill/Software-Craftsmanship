@@ -25,6 +25,11 @@ public final class Opod extends AbstractProduct {
         return serialNumber.isEven() && !isThirdBitSet(serialNumber);
     }
 
+    public boolean testMeth() {
+        Opod.isValidSerialNumber(this.getSerialNumber());
+        return true;
+    }
+
     /**
      * check if the third bit is set
      * @param serialNumber

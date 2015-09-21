@@ -1,5 +1,7 @@
 package orange;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -51,40 +53,83 @@ public abstract class AbstractProduct implements Product {
      * @return
      * @throws ProductException
      */
-    public static Product make(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description)
-            throws ProductException {
+//    public static Product make(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description)
+//            throws ProductException {
+//
+//        Product retVal;
+//        String productName = productType.getName();
+//
+//        switch (productName) {
+//            case "oPod": {
+//                retVal = createOpod(productType, serialNumber, description);
+//                break;
+//            }
+//            case "oPad": {
+//                retVal =  createOpad(productType, serialNumber, description);
+//                break;
+//            }
+//            case "oWatch": {
+//                retVal = createOwatch(productType, serialNumber, description);
+//                break;
+//            }
+//            case "oTv": {
+//                retVal =  createOtv(productType, serialNumber, description);
+//                break;
+//            }
+//            case "oPhone": {
+//                retVal = createOphone(productType, serialNumber, description);
+//                break;
+//            }
+//            default: {
+//                throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_PRODUCT_TYPE);
+//            }
+//        }
+//
+//        return retVal;
+//    }
 
-        Product retVal;
-        String productName = productType.getName();
+    @FunctionalInterface
+    public interface ProductMaker {
+        public Product createProduct(SerialNumber serialNumber, Optional<Set<String>> description);
+    }
 
-        switch (productName) {
-            case "oPod": {
-                retVal = createOpod(productType, serialNumber, description);
-                break;
+    @FunctionalInterface
+    public interface SerialValidator {
+        public Boolean validateSerial(SerialNumber serialNumber);
+    }
+
+    public static Product make(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
+        Map<ProductType, ProductMaker> map = new HashMap<ProductType, ProductMaker>() {{
+            put(ProductType.OPOD, Opod::new);
+            put(ProductType.OPAD, Opad::new);
+            put(ProductType.OPHONE, Ophone::new);
+            put(ProductType.OWATCH, Owatch::new);
+            put(ProductType.OTV, Otv::new);
+        }};
+
+        Map<ProductType, Boolean> validationMap = new HashMap<ProductType, Boolean>() {{
+            put(ProductType.OPOD, Opod.isValidSerialNumber(serialNumber));
+            put(ProductType.OPAD, Opad.isValidSerialNumber(serialNumber));
+            put(ProductType.OPHONE, Ophone.isValidSerialNumber(serialNumber));
+            put(ProductType.OWATCH, Owatch.isValidSerialNumber(serialNumber));
+            put(ProductType.OTV, Otv.isValidSerialNumber(serialNumber));
+
+        }};
+
+        if(map.containsKey(productType)) {
+            if(validationMap.get(productType)) {
+                return map.get(productType).createProduct(serialNumber, description);
             }
-            case "oPad": {
-                retVal =  createOpad(productType, serialNumber, description);
-                break;
-            }
-            case "oWatch": {
-                retVal = createOwatch(productType, serialNumber, description);
-                break;
-            }
-            case "oTv": {
-                retVal =  createOtv(productType, serialNumber, description);
-                break;
-            }
-            case "oPhone": {
-                retVal = createOphone(productType, serialNumber, description);
-                break;
-            }
-            default: {
-                throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_PRODUCT_TYPE);
+            else {
+                throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
             }
         }
-
-        return retVal;
+        else {
+            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_PRODUCT_TYPE);
+        }
     }
+
+
 
     /**
      * Overrides Java.util.equals
@@ -141,51 +186,5 @@ public abstract class AbstractProduct implements Product {
         }
 
         return sb.toString();
-    }
-
-    //The following methods are used in the object factory to create the desired object
-    private static Opod createOpod(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
-        if(Opod.isValidSerialNumber(serialNumber)) {
-            return new Opod(serialNumber, description);
-        }
-        else {
-            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
-        }
-    }
-
-    private static Opad createOpad(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
-        if(Opad.isValidSerialNumber(serialNumber)) {
-            return new Opad(serialNumber, description);
-        }
-        else {
-            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
-        }
-    }
-
-    private static Owatch createOwatch(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
-        if(Owatch.isValidSerialNumber(serialNumber)) {
-            return new Owatch(serialNumber, description);
-        }
-        else {
-            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
-        }
-    }
-
-    private static Ophone createOphone(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
-        if(Ophone.isValidSerialNumber(serialNumber)) {
-            return new Ophone(serialNumber, description);
-        }
-        else {
-            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
-        }
-    }
-
-    private static Otv createOtv(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
-        if(Otv.isValidSerialNumber(serialNumber)) {
-            return new Otv(serialNumber, description);
-        }
-        else {
-            throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_SERIAL_NUMBER);
-        }
     }
 }
