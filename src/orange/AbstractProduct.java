@@ -46,58 +46,21 @@ public abstract class AbstractProduct implements Product {
     }
 
     /**
-     * Object factory: Creates objects based on the user's input
-     * @param productType
-     * @param serialNumber
-     * @param description
-     * @return
-     * @throws ProductException
+     * a functional interface for the object factory
      */
-//    public static Product make(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description)
-//            throws ProductException {
-//
-//        Product retVal;
-//        String productName = productType.getName();
-//
-//        switch (productName) {
-//            case "oPod": {
-//                retVal = createOpod(productType, serialNumber, description);
-//                break;
-//            }
-//            case "oPad": {
-//                retVal =  createOpad(productType, serialNumber, description);
-//                break;
-//            }
-//            case "oWatch": {
-//                retVal = createOwatch(productType, serialNumber, description);
-//                break;
-//            }
-//            case "oTv": {
-//                retVal =  createOtv(productType, serialNumber, description);
-//                break;
-//            }
-//            case "oPhone": {
-//                retVal = createOphone(productType, serialNumber, description);
-//                break;
-//            }
-//            default: {
-//                throw new ProductException(productType, serialNumber, ProductException.ErrorCode.INVALID_PRODUCT_TYPE);
-//            }
-//        }
-//
-//        return retVal;
-//    }
-
     @FunctionalInterface
     public interface ProductMaker {
         public Product createProduct(SerialNumber serialNumber, Optional<Set<String>> description);
     }
 
-    @FunctionalInterface
-    public interface SerialValidator {
-        public Boolean validateSerial(SerialNumber serialNumber);
-    }
-
+    /**
+     * Object factory. Creates products based on the user's input
+     * @param productType
+     * @param serialNumber
+     * @param description
+     * @return Product of the specified type
+     * @throws ProductException
+     */
     public static Product make(ProductType productType, SerialNumber serialNumber, Optional<Set<String>> description) throws ProductException {
         Map<ProductType, ProductMaker> map = new HashMap<ProductType, ProductMaker>() {{
             put(ProductType.OPOD, Opod::new);

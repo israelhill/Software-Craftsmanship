@@ -19,6 +19,16 @@ public class Ophone extends AbstractProduct {
         return serialNumber.isOdd() &&  isValidGcd(serialNumber);
     }
 
+    @Override
+    public void process(Exchange request, RequestStatus status) throws ProductException {
+
+    }
+
+    @Override
+    public void process(Refund request, RequestStatus status) throws ProductException {
+
+    }
+
     public static boolean isValidGcd(SerialNumber serialNumber) {
         SerialNumber number = new SerialNumber(BigInteger.valueOf(630));
         long value = serialNumber.gcd(number).longValue();

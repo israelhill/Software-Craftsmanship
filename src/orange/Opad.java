@@ -18,6 +18,16 @@ public class Opad extends AbstractProduct {
         return serialNumber.isEven() && isThirdBitSet(serialNumber);
     }
 
+    @Override
+    public void process(Exchange request, RequestStatus status) throws ProductException {
+
+    }
+
+    @Override
+    public void process(Refund request, RequestStatus status) throws ProductException {
+
+    }
+
     public static boolean isThirdBitSet(SerialNumber serialNumber) {
         return serialNumber.testBit(3);
     }

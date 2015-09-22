@@ -17,6 +17,16 @@ public final class Opod extends AbstractProduct {
         return ProductType.OPOD;
     }
 
+    @Override
+    public void process(Exchange request, RequestStatus status) throws ProductException {
+
+    }
+
+    @Override
+    public void process(Refund request, RequestStatus status) throws ProductException {
+
+    }
+
     /**
      * @param serialNumber
      * @return true if valid, false if not

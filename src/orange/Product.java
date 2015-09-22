@@ -12,4 +12,8 @@ public interface Product {
     public String getProductName();
 
     public Optional<Set<String>> getDescription();
+
+    public void process(Exchange request, RequestStatus status) throws ProductException;
+
+    public void process(Refund request, RequestStatus status) throws ProductException;
 }
