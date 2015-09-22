@@ -154,4 +154,56 @@ public class ProductsTest {
 
         Assert.assertTrue(o1.equals(o2));
     }
+
+    @Test
+    public void testExchangeBuilder() {
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(1));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(2));
+        SerialNumber s3 = new SerialNumber(BigInteger.valueOf(3));
+
+        Exchange.Builder builder = new Exchange.Builder();
+        builder.addCompatible(s1);
+        builder.addCompatible(s2);
+
+        // There should be 2 serials in the set
+        Exchange exchange = builder.build();
+        Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
+
+        // Changing the builder should not change the exchange
+        // exchange size should still be 2
+        builder.addCompatible(s3);
+        Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
+
+
+        for (SerialNumber serialNumber : exchange.getCompatableProducts()) {
+            System.out.println("Compatible serial: " + serialNumber.getSerialNumber().toString());
+        }
+    }
+
+    @Test
+    public void testRefundBuilder() {
+        BigInteger s1 = BigInteger.valueOf(1234);
+        BigInteger s2 = BigInteger.valueOf(5678);
+
+        Refund.Builder builder = new Refund.Builder();
+        try {
+            builder.setRMA(s1);
+        }
+        catch (RequestException e) {
+            System.out.println("Exception: " + e.toString());
+        }
+
+        Refund refund = builder.build();
+        Assert.assertEquals(refund.getRMA(), builder.getRMA());
+
+        try {
+            builder.setRMA(s2);
+        }
+        catch (RequestException e) {
+            System.out.println("Exception: " + e.toString());
+        }
+
+        // When you change the builder's rma, the Refund rma should remain the same
+        Assert.assertNotEquals(refund.getRMA(), builder.getRMA());
+    }
 }

@@ -18,7 +18,7 @@ public final class Refund implements Request {
         return rmaCode;
     }
 
-    private static class Builder {
+    public static class Builder {
         private BigInteger rma;
 
         public Builder setRMA(BigInteger rma) throws RequestException {
