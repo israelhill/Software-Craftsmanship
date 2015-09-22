@@ -170,8 +170,10 @@ public class ProductsTest {
         Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
 
         // Changing the builder should not change the exchange
-        // exchange size should still be 2
+        // builder's size should now be 3
+        // exchange size should remain at 2
         builder.addCompatible(s3);
+        Assert.assertEquals(builder.getCompatibleProducts().size(), 3);
         Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
 
 
