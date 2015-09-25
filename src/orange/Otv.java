@@ -21,12 +21,12 @@ public class Otv extends AbstractProduct {
 
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
-
+        throw new ProductException(ProductType.OTV, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
     }
 
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
-
+        throw new ProductException(ProductType.OTV, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
     }
 
     public static boolean isValidGcd(SerialNumber serialNumber) {

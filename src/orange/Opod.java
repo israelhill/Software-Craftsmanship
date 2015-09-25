@@ -19,12 +19,12 @@ public final class Opod extends AbstractProduct {
 
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
-
+        throw new ProductException(ProductType.OPOD, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
     }
 
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
-
+        throw new ProductException(ProductType.OPOD, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
     }
 
     /**

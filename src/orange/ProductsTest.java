@@ -167,43 +167,35 @@ public class ProductsTest {
 
         // There should be 2 serials in the set
         Exchange exchange = builder.build();
-        Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
+        Assert.assertEquals(exchange.getCompatibleProducts().size(), 2);
 
         // Changing the builder should not change the exchange
         // builder's size should now be 3
         // exchange size should remain at 2
         builder.addCompatible(s3);
         Assert.assertEquals(builder.getCompatibleProducts().size(), 3);
-        Assert.assertEquals(exchange.getCompatableProducts().size(), 2);
+        Assert.assertEquals(exchange.getCompatibleProducts().size(), 2);
 
+        //Exchange should remain immutable
+        Set<SerialNumber> products;
+        products = exchange.getCompatibleProducts();
+        products.add(new SerialNumber(BigInteger.valueOf(23)));
+        Assert.assertEquals(exchange.getCompatibleProducts().size(), 2);
 
-        for (SerialNumber serialNumber : exchange.getCompatableProducts()) {
-            System.out.println("Compatible serial: " + serialNumber.getSerialNumber().toString());
-        }
     }
 
     @Test
-    public void testRefundBuilder() {
+    public void testRefundBuilder() throws RequestException {
         BigInteger s1 = BigInteger.valueOf(1234);
         BigInteger s2 = BigInteger.valueOf(5678);
 
         Refund.Builder builder = new Refund.Builder();
-        try {
-            builder.setRMA(s1);
-        }
-        catch (RequestException e) {
-            System.out.println("Exception: " + e.toString());
-        }
+        builder.setRMA(s1);
 
         Refund refund = builder.build();
         Assert.assertEquals(refund.getRMA(), builder.getRMA());
 
-        try {
-            builder.setRMA(s2);
-        }
-        catch (RequestException e) {
-            System.out.println("Exception: " + e.toString());
-        }
+        builder.setRMA(s2);
 
         // When you change the builder's rma, the Refund rma should remain the same
         Assert.assertNotEquals(refund.getRMA(), builder.getRMA());
