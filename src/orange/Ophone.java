@@ -21,6 +21,12 @@ public class Ophone extends AbstractProduct {
         return serialNumber.isOdd() &&  isValidGcd(serialNumber);
     }
 
+    /**
+     * process an exchange
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
         SerialNumber compatibleProduct = this.getCompatibleProductForExhange(request);
@@ -35,6 +41,12 @@ public class Ophone extends AbstractProduct {
         }
     }
 
+    /**
+     * process a refund
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
         if(isValideRefund(request, this.getSerialNumber())) {

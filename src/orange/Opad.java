@@ -20,6 +20,12 @@ public class Opad extends AbstractProduct {
         return serialNumber.isEven() && isThirdBitSet(serialNumber);
     }
 
+    /**
+     * processes an exhange
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
         SerialNumber compatibleProduct = request.getCompatibleProducts().lower(this.getSerialNumber());
@@ -36,6 +42,12 @@ public class Opad extends AbstractProduct {
         }
     }
 
+    /**
+     * processes a refund
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
         if(isValidRefund(request, this.getSerialNumber())) {
@@ -55,6 +67,12 @@ public class Opad extends AbstractProduct {
         return serialNumber.testBit(3);
     }
 
+    /**
+     * check that the refund is valid
+     * @param refund
+     * @param serialNumber
+     * @return
+     */
     public static boolean isValidRefund(Refund refund, SerialNumber serialNumber) {
         BigInteger gcd = refund.getRMA().gcd(serialNumber.getSerialNumber());
         return gcd.compareTo(VALID_REFUND) == 1 || gcd.compareTo(VALID_REFUND) == 0;

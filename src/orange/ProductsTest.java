@@ -218,6 +218,7 @@ public class ProductsTest {
             e.printStackTrace();
         }
         Assert.assertEquals(status.getStatusCode(), RequestStatus.StatusCode.FAIL);
+        Assert.assertEquals(Optional.empty(), status.getResult());
 
         //this one should pass
         Exchange.Builder builder2 = new Exchange.Builder();
@@ -231,6 +232,7 @@ public class ProductsTest {
             e.printStackTrace();
         }
         Assert.assertEquals(status2.getStatusCode(), RequestStatus.StatusCode.OK);
+        Assert.assertEquals(Optional.of(BigInteger.valueOf(1032)), status2.getResult());
 
     }
 
@@ -255,6 +257,7 @@ public class ProductsTest {
         }
 
         Assert.assertEquals(status.getStatusCode(), RequestStatus.StatusCode.OK);
+        Assert.assertEquals(Optional.of(BigInteger.valueOf(1032)), status.getResult());
     }
     
     @Test
@@ -291,6 +294,7 @@ public class ProductsTest {
             e.printStackTrace();
         }
         Assert.assertEquals(RequestStatus.StatusCode.FAIL, status2.getStatusCode());
+        Assert.assertEquals(Optional.of(BigInteger.valueOf(6)), status.getResult());
     }
 
     @Test
@@ -316,6 +320,7 @@ public class ProductsTest {
             e.printStackTrace();
         }
         Assert.assertEquals(RequestStatus.StatusCode.FAIL, status.getStatusCode());
+        Assert.assertEquals(Optional.empty(), status.getResult());
     }
 
     @Test
@@ -343,6 +348,107 @@ public class ProductsTest {
         Assert.assertEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
         //Avg is 26, result should be 20
         Assert.assertEquals(Optional.of(BigInteger.valueOf(20)), status.getResult());
+    }
 
+    @Test
+    public void testOpodRefund() throws RequestException, ProductException {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(72));
+        Opod o = new Opod(num, null);
+
+        BigInteger s1 = BigInteger.valueOf(48);
+
+        Refund.Builder builder = new Refund.Builder();
+        builder.setRMA(s1);
+        Refund refund = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        o.process(refund, status);
+
+        Assert.assertEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
+    }
+
+    @Test
+    public void testOpadRefund() throws RequestException, ProductException {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(72));
+        Opad o = new Opad(num, null);
+
+        BigInteger s1 = BigInteger.valueOf(48);
+
+        Refund.Builder builder = new Refund.Builder();
+        builder.setRMA(s1);
+        Refund refund = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        o.process(refund, status);
+
+        Assert.assertEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
+    }
+
+    @Test
+    public void testOphoneRefund() throws RequestException, ProductException {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(73));
+        Ophone o = new Ophone(num, null);
+
+        BigInteger s1 = BigInteger.valueOf(48);
+
+        Refund.Builder builder = new Refund.Builder();
+        builder.setRMA(s1);
+        Refund refund = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            o.process(refund, status);
+        }
+        catch (ProductException e) {
+            e.printStackTrace();
+        }
+
+        //Ophone always fails. Ophone is odd -- left shit produces even
+        Assert.assertNotEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
+    }
+
+    @Test
+    public void testOtvRefund() throws RequestException, ProductException {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(73));
+        Otv o = new Otv(num, null);
+
+        BigInteger s1 = BigInteger.valueOf(-48);
+
+        Refund.Builder builder = new Refund.Builder();
+        builder.setRMA(s1);
+        Refund refund = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            o.process(refund, status);
+        }
+        catch (ProductException e) {
+            e.printStackTrace();
+        }
+
+        //negative values result in a failure.
+        Assert.assertNotEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
+
+        BigInteger s2 = BigInteger.valueOf(48);
+
+        Refund.Builder builder2 = new Refund.Builder();
+        builder2.setRMA(s2);
+        Refund refund2 = builder2.build();
+
+        RequestStatus status2 = new RequestStatus();
+
+        try {
+            o.process(refund2, status2);
+        }
+        catch (ProductException e) {
+            e.printStackTrace();
+        }
+
+        //positive rma results in success
+        Assert.assertEquals(RequestStatus.StatusCode.OK, status2.getStatusCode());
     }
 }

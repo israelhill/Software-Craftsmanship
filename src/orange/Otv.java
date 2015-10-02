@@ -21,6 +21,12 @@ public class Otv extends AbstractProduct {
         return serialNumber.isOdd() &&  isValidGcd(serialNumber);
     }
 
+    /**
+     * process an exchange
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
         SerialNumber compatibleProduct = this.getCompatibleProductForExchange(request);
@@ -38,6 +44,12 @@ public class Otv extends AbstractProduct {
 
     }
 
+    /**
+     * process a refund
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
         if(isValidRefund(request)) {

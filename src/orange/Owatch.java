@@ -19,6 +19,12 @@ public class Owatch extends AbstractProduct {
         return serialNumber.isOdd() &&  isValidGcd(serialNumber);
     }
 
+    /**
+     * process an exchange
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
         SerialNumber compatibleProduct = request.getCompatibleProducts().higher(this.getSerialNumber());
@@ -35,6 +41,12 @@ public class Owatch extends AbstractProduct {
         }
     }
 
+    /**
+     * process a refund
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
         if(isValidRefund(request,this.getSerialNumber())) {
@@ -55,6 +67,12 @@ public class Owatch extends AbstractProduct {
         return 14 < value && value <= 42;
     }
 
+    /**
+     * check that a refund is valid
+     * @param refund
+     * @param serialNumber
+     * @return
+     */
     public static boolean isValidRefund(Refund refund, SerialNumber serialNumber) {
         final BigInteger VALID_INPUT = BigInteger.valueOf(14);
         BigInteger xorValue = refund.getRMA().xor(serialNumber.getSerialNumber());

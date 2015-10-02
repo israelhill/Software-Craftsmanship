@@ -20,6 +20,12 @@ public final class Opod extends AbstractProduct {
         return ProductType.OPOD;
     }
 
+    /**
+     * processes an exchange
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
         Iterator<SerialNumber> iterator = request.getCompatibleProducts().iterator();
@@ -40,6 +46,12 @@ public final class Opod extends AbstractProduct {
 
     }
 
+    /**
+     * processes a refund
+     * @param request
+     * @param status
+     * @throws ProductException
+     */
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
         if(isValidRefund(request, this.getSerialNumber())) {
