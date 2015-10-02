@@ -113,8 +113,6 @@ public class ProductsTest {
         SerialNumber num = new SerialNumber(test);
 
         Opad o = new Opad(num, description);
-
-        System.out.println(o.toString());
     }
 
     @Test
@@ -199,5 +197,152 @@ public class ProductsTest {
 
         // When you change the builder's rma, the Refund rma should remain the same
         Assert.assertNotEquals(refund.getRMA(), builder.getRMA());
+    }
+
+    @Test
+    public void testOpodExhchange() {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(1000));
+        Opod tOPod = new Opod(num, null);
+
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(1032));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(1244));
+
+        //do not add any compatible products, status should be FAIL for first test
+        Exchange.Builder builder = new Exchange.Builder();
+        Exchange exchange = builder.build();
+        RequestStatus status = new RequestStatus();
+
+        try {
+            tOPod.process(exchange, status);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(status.getStatusCode(), RequestStatus.StatusCode.FAIL);
+
+        //this one should pass
+        Exchange.Builder builder2 = new Exchange.Builder();
+        builder2.addCompatible(s1).addCompatible(s2);
+        Exchange exchange2 = builder2.build();
+        RequestStatus status2 = new RequestStatus();
+
+        try {
+            tOPod.process(exchange2, status2);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(status2.getStatusCode(), RequestStatus.StatusCode.OK);
+
+    }
+
+    @Test
+    public void testOpadExchange() {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(1048));
+        Opad tOPad = new Opad(num, null);
+
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(1032));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(1244));
+
+        Exchange.Builder builder = new Exchange.Builder();
+        builder.addCompatible(s1).addCompatible(s2);
+        Exchange exchange = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            tOPad.process(exchange, status);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+
+        Assert.assertEquals(status.getStatusCode(), RequestStatus.StatusCode.OK);
+    }
+    
+    @Test
+    public void testOphoneExchange() {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(5));
+        Ophone phone = new Ophone(num, null);
+
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(1));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(6));
+        SerialNumber s3 = new SerialNumber(BigInteger.valueOf(7));
+        SerialNumber s4 = new SerialNumber(BigInteger.valueOf(10));
+
+        Exchange.Builder builder = new Exchange.Builder();
+        builder.addCompatible(s1).addCompatible(s2).addCompatible(s3).addCompatible(s4);
+        Exchange exchange = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            phone.process(exchange, status);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(status.getStatusCode(), RequestStatus.StatusCode.OK);
+
+        Exchange.Builder builder2 = new Exchange.Builder();
+        Exchange exchange2 = builder2.build();
+
+        RequestStatus status2 = new RequestStatus();
+
+        try {
+            phone.process(exchange2, status2);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(RequestStatus.StatusCode.FAIL, status2.getStatusCode());
+    }
+
+    @Test
+    public void testOwatchExchange() {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(6));
+        Owatch w = new Owatch(num, null);
+
+        //None of these are greater than w, the exchange should fail
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(5));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(6));
+        SerialNumber s3 = new SerialNumber(BigInteger.valueOf(3));
+        SerialNumber s4 = new SerialNumber(BigInteger.valueOf(1));
+
+        Exchange.Builder builder = new Exchange.Builder();
+        builder.addCompatible(s1).addCompatible(s2).addCompatible(s3).addCompatible(s4);
+        Exchange exchange = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            w.process(exchange, status);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(RequestStatus.StatusCode.FAIL, status.getStatusCode());
+    }
+
+    @Test
+    public void testOtvExchange() {
+        SerialNumber num = new SerialNumber(BigInteger.valueOf(10));
+        Otv tv = new Otv(num, null);
+
+        //None of these are greater than w, the exchange should fail
+        SerialNumber s1 = new SerialNumber(BigInteger.valueOf(20));
+        SerialNumber s2 = new SerialNumber(BigInteger.valueOf(30));
+        SerialNumber s3 = new SerialNumber(BigInteger.valueOf(40));
+        //SerialNumber s4 = new SerialNumber(BigInteger.valueOf(1));
+
+        Exchange.Builder builder = new Exchange.Builder();
+        builder.addCompatible(s1).addCompatible(s2).addCompatible(s3);
+        Exchange exchange = builder.build();
+
+        RequestStatus status = new RequestStatus();
+
+        try {
+            tv.process(exchange, status);
+        } catch (ProductException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(RequestStatus.StatusCode.OK, status.getStatusCode());
+        //Avg is 26, result should be 20
+        Assert.assertEquals(Optional.of(BigInteger.valueOf(20)), status.getResult());
+
     }
 }

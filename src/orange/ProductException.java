@@ -9,7 +9,9 @@ public class ProductException extends Exception {
     public enum ErrorCode {
         INVALID_SERIAL_NUMBER,
         INVALID_PRODUCT_TYPE,
-        UNSUPPORTED_OPERATION;
+        UNSUPPORTED_OPERATION,
+        NO_COMPATIBLE_PRODUCTS,
+        INVALID_REFUND;
     }
 
     /**

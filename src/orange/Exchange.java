@@ -51,7 +51,7 @@ public final class Exchange implements Request {
          */
         public Builder addCompatible(SerialNumber serialNumber) {
             compatibleSet.add(serialNumber);
-            return new Builder();
+            return this;
         }
 
         /**

@@ -25,7 +25,8 @@ public final class Refund implements Request {
             product.process(this, requestStatus);
         }
         catch(ProductException e) {
-            throw new RequestException();
+            String message = "An error occured while processing your request.";
+            throw new RequestException(message, e);
         }
     }
 
@@ -34,7 +35,7 @@ public final class Refund implements Request {
      * @return
      */
     public BigInteger getRMA() {
-        return new BigInteger(String.valueOf(rmaCode));
+        return rmaCode;
     }
 
 

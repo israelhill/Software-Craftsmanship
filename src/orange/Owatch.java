@@ -21,12 +21,31 @@ public class Owatch extends AbstractProduct {
 
     @Override
     public void process(Exchange request, RequestStatus status) throws ProductException {
-        throw new ProductException(ProductType.OWATCH, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
+        SerialNumber compatibleProduct = request.getCompatibleProducts().higher(this.getSerialNumber());
+
+        if(compatibleProduct != null) {
+            status.setStatusCode(RequestStatus.StatusCode.OK);
+            status.setResult(Optional.of(compatibleProduct.getSerialNumber()));
+        }
+        else {
+            status.setStatusCode(RequestStatus.StatusCode.FAIL);
+            status.setResult(Optional.<BigInteger>empty());
+            throw new ProductException(ProductType.OWATCH, this.getSerialNumber(),
+                    ProductException.ErrorCode.NO_COMPATIBLE_PRODUCTS);
+        }
     }
 
     @Override
     public void process(Refund request, RequestStatus status) throws ProductException {
-        throw new ProductException(ProductType.OWATCH, this.getSerialNumber(), ProductException.ErrorCode.UNSUPPORTED_OPERATION);
+        if(isValidRefund(request,this.getSerialNumber())) {
+            status.setResult(Optional.<BigInteger>empty());
+            status.setStatusCode(RequestStatus.StatusCode.OK);
+        }
+        else {
+            status.setResult(Optional.<BigInteger>empty());
+            status.setStatusCode(RequestStatus.StatusCode.FAIL);
+            throw new ProductException(ProductType.OWATCH, this.getSerialNumber(), ProductException.ErrorCode.INVALID_REFUND);
+        }
     }
 
     public static boolean isValidGcd(SerialNumber serialNumber) {
@@ -34,5 +53,12 @@ public class Owatch extends AbstractProduct {
         long value = serialNumber.gcd(number).longValue();
 
         return 14 < value && value <= 42;
+    }
+
+    public static boolean isValidRefund(Refund refund, SerialNumber serialNumber) {
+        final BigInteger VALID_INPUT = BigInteger.valueOf(14);
+        BigInteger xorValue = refund.getRMA().xor(serialNumber.getSerialNumber());
+
+        return xorValue.compareTo(VALID_INPUT) == 1;
     }
 }
